@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>vue源码解析笔记（runtime+compile 版本） | Yang&#39;s blog</title>
+    <meta name="generator" content="VuePress 1.5.2">
+    <link rel="icon" href="/yangBlog/img/favicon.ico">
+    <meta name="description" content="web前端技术博客,简洁至上,专注web前端学习与总结。JavaScript,js,ES6,TypeScript,vue,python,css3,html5,Node,git,github等技术文章。">
+    <meta name="keywords" content="前端博客,个人技术博客,前端,前端开发,前端框架,web前端,前端面试题,技术文档,学习,面试,JavaScript,js,ES6,TypeScript,vue,python,css3,html5,Node,git,github,markdown">
+    <meta name="baidu-site-verification" content="7F55weZDDc">
+    <meta name="theme-color" content="#11a8cd">
+    <link rel="preload" href="/yangBlog/assets/css/0.styles.28694182.css" as="style"><link rel="preload" href="/yangBlog/assets/js/app.bf5a58a0.js" as="script"><link rel="preload" href="/yangBlog/assets/js/2.c95f3dc1.js" as="script"><link rel="preload" href="/yangBlog/assets/js/6.801b23e0.js" as="script"><link rel="prefetch" href="/yangBlog/assets/js/10.e9d0d198.js"><link rel="prefetch" href="/yangBlog/assets/js/11.53b125a6.js"><link rel="prefetch" href="/yangBlog/assets/js/12.f28731c7.js"><link rel="prefetch" href="/yangBlog/assets/js/13.532011e6.js"><link rel="prefetch" href="/yangBlog/assets/js/14.c9364db4.js"><link rel="prefetch" href="/yangBlog/assets/js/15.29b928b1.js"><link rel="prefetch" href="/yangBlog/assets/js/16.3789f778.js"><link rel="prefetch" href="/yangBlog/assets/js/17.3d72ffab.js"><link rel="prefetch" href="/yangBlog/assets/js/18.9dfd847b.js"><link rel="prefetch" href="/yangBlog/assets/js/19.03669bd6.js"><link rel="prefetch" href="/yangBlog/assets/js/20.43e3a3f7.js"><link rel="prefetch" href="/yangBlog/assets/js/21.2c443c01.js"><link rel="prefetch" href="/yangBlog/assets/js/22.2b8557ff.js"><link rel="prefetch" href="/yangBlog/assets/js/23.35d3bcaf.js"><link rel="prefetch" href="/yangBlog/assets/js/3.894ec1da.js"><link rel="prefetch" href="/yangBlog/assets/js/4.9b1dac4f.js"><link rel="prefetch" href="/yangBlog/assets/js/5.f15a2f3c.js"><link rel="prefetch" href="/yangBlog/assets/js/7.e9b409de.js"><link rel="prefetch" href="/yangBlog/assets/js/8.d6ff01b8.js"><link rel="prefetch" href="/yangBlog/assets/js/9.0ca74578.js">
+    <link rel="stylesheet" href="/yangBlog/assets/css/0.styles.28694182.css">
+  </head>
+  <body class="theme-mode-light">
+    <div id="app" data-server-rendered="true"><div class="theme-container sidebar-open have-rightmenu"><header class="navbar blur"><div title="目录" class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/yangBlog/" class="home-link router-link-active"><img src="/yangBlog/img/yang.png" alt="Yang's blog" class="logo"> <span class="site-name can-hide">Yang's blog</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/yangBlog/" class="nav-link">首页</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="前端" class="dropdown-title"><a href="/yangBlog/web/" class="link-title">前端</a> <span class="title" style="display:none;">前端</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/yangBlog/pages/fdd547/" class="nav-link">React</a></li><li class="dropdown-item"><!----> <a href="/yangBlog/pages/c47f4c/" aria-current="page" class="nav-link router-link-exact-active router-link-active">Vue</a></li><li class="dropdown-item"><!----> <a href="/yangBlog/pages/f7308b/" class="nav-link">Node</a></li></ul></div></div><div class="nav-item"><a href="/yangBlog/technology/" class="nav-link">技术</a></div><div class="nav-item"><a href="/yangBlog/tools/" class="nav-link">开发工具</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="收藏" class="dropdown-title"><a href="/yangBlog/pages/beb6c0bd8a66cea6/" class="link-title">收藏</a> <span class="title" style="display:none;">收藏</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/yangBlog/pages/beb6c0bd8a66cea6/" class="nav-link">网站</a></li><li class="dropdown-item"><!----> <a href="/yangBlog/pages/eee83a9211a70f9d/" class="nav-link">资源</a></li><li class="dropdown-item"><!----> <a href="/yangBlog/pages/12df8ace52d493f6/" class="nav-link">Vue资源</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="索引" class="dropdown-title"><a href="/yangBlog/archives/" class="link-title">索引</a> <span class="title" style="display:none;">索引</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/yangBlog/categories/" class="nav-link">分类</a></li><li class="dropdown-item"><!----> <a href="/yangBlog/tags/" class="nav-link">标签</a></li><li class="dropdown-item"><!----> <a href="/yangBlog/archives/" class="nav-link">归档</a></li></ul></div></div><div class="nav-item"><a href="/yangBlog/friends/" class="nav-link">友情链接</a></div><div class="nav-item"><a href="/yangBlog/about/" class="nav-link">关于</a></div> <a href="https://github.com/Gyang18/yangBlog" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar" style="display:none;"><div class="blogger"><img src="https://avatars3.githubusercontent.com/u/24975063?s=460u=ac1f8cea2aa61c14e9850c35b2f0ccba4647ed64&amp;v=4"> <div class="blogger-info"><h3>Gyang18</h3> <span>
+        前端小菜鸟
+      </span></div></div> <nav class="nav-links"><div class="nav-item"><a href="/yangBlog/" class="nav-link">首页</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="前端" class="dropdown-title"><a href="/yangBlog/web/" class="link-title">前端</a> <span class="title" style="display:none;">前端</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/yangBlog/pages/fdd547/" class="nav-link">React</a></li><li class="dropdown-item"><!----> <a href="/yangBlog/pages/c47f4c/" aria-current="page" class="nav-link router-link-exact-active router-link-active">Vue</a></li><li class="dropdown-item"><!----> <a href="/yangBlog/pages/f7308b/" class="nav-link">Node</a></li></ul></div></div><div class="nav-item"><a href="/yangBlog/technology/" class="nav-link">技术</a></div><div class="nav-item"><a href="/yangBlog/tools/" class="nav-link">开发工具</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="收藏" class="dropdown-title"><a href="/yangBlog/pages/beb6c0bd8a66cea6/" class="link-title">收藏</a> <span class="title" style="display:none;">收藏</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/yangBlog/pages/beb6c0bd8a66cea6/" class="nav-link">网站</a></li><li class="dropdown-item"><!----> <a href="/yangBlog/pages/eee83a9211a70f9d/" class="nav-link">资源</a></li><li class="dropdown-item"><!----> <a href="/yangBlog/pages/12df8ace52d493f6/" class="nav-link">Vue资源</a></li></ul></div></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="索引" class="dropdown-title"><a href="/yangBlog/archives/" class="link-title">索引</a> <span class="title" style="display:none;">索引</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/yangBlog/categories/" class="nav-link">分类</a></li><li class="dropdown-item"><!----> <a href="/yangBlog/tags/" class="nav-link">标签</a></li><li class="dropdown-item"><!----> <a href="/yangBlog/archives/" class="nav-link">归档</a></li></ul></div></div><div class="nav-item"><a href="/yangBlog/friends/" class="nav-link">友情链接</a></div><div class="nav-item"><a href="/yangBlog/about/" class="nav-link">关于</a></div> <a href="https://github.com/Gyang18/yangBlog" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Vue</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/yangBlog/pages/c47f4c/" aria-current="page" class="active sidebar-link">Vue源码解析笔记</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/yangBlog/pages/c47f4c/#一、数据驱动" class="sidebar-link">一、数据驱动</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/yangBlog/pages/c47f4c/#new-vue时进行的操作" class="sidebar-link">new Vue时进行的操作:</a></li><li class="sidebar-sub-header"><a href="/yangBlog/pages/c47f4c/#vue实例的挂载实现" class="sidebar-link">vue实例的挂载实现</a></li><li class="sidebar-sub-header"><a href="/yangBlog/pages/c47f4c/#render方法：" class="sidebar-link">render方法：</a></li><li class="sidebar-sub-header"><a href="/yangBlog/pages/c47f4c/#virtual-dom：" class="sidebar-link">Virtual DOM：</a></li><li class="sidebar-sub-header"><a href="/yangBlog/pages/c47f4c/#createelement方法：" class="sidebar-link">createElement方法：</a></li><li class="sidebar-sub-header"><a href="/yangBlog/pages/c47f4c/#数据驱动小结：" class="sidebar-link">数据驱动小结：</a></li></ul></li></ul></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>React</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Node</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <div><main class="page"> <div class="theme-vdoing-wrapper"><div class="articleInfo-wrap" data-v-14888ed5><div class="articleInfo" data-v-14888ed5><ul class="breadcrumbs" data-v-14888ed5><li data-v-14888ed5><a href="/yangBlog/" title="首页" class="iconfont icon-home router-link-active" data-v-14888ed5></a></li> <li data-v-14888ed5><a href="/yangBlog/web" title="前端-目录页" data-v-14888ed5>前端</a></li> <li data-v-14888ed5><a href="/yangBlog/web/#Vue" title="前端#Vue" data-v-14888ed5>Vue</a></li></ul> <div class="info" data-v-14888ed5><div title="作者" class="author iconfont icon-touxiang" data-v-14888ed5><a href="https://github.com/Gyang18" target="_blank" title="作者" class="beLink" data-v-14888ed5>Gyang18</a></div> <div title="创建时间" class="date iconfont icon-riqi" data-v-14888ed5><a href="javascript:;" data-v-14888ed5>2020-06-07</a></div> <!----></div></div></div> <!----> <div class="content-wrapper"><div class="right-menu-wrapper"><div class="right-menu-margin"><div class="right-menu-content"></div></div></div> <h1><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAABGpJREFUSA3tVVtoXFUU3fvOI53UlmCaKIFmwEhsE7QK0ipFEdHEKpXaZGrp15SINsXUWvBDpBgQRKi0+KKoFeJHfZA+ED9KKoIU2gYD9UejTW4rVIzm0VSTziPzuNu1z507dibTTjL4U/DAzLn3nL3X2o91ziX6f9wMFdh6Jvbm9nNSV0msViVO6tN1Rm7NMu2OpeJ9lWBUTDxrJbYTS0hInuwciu9eLHlFxCLCZEk3MegsJmZ5K/JD6t7FkFdEvGUo1g7qJoG3MHImqRIn8/nzY1K9UPKKiJmtnUqHVE3Gbuay6vJE/N2FEmuxFjW2nUuE0yQXRRxLiTUAzs36zhZvOXJPdX850EVnnLZkB8prodQoM5JGj7Xk2mvC7JB8tG04Ef5PiXtG0UtxupRQSfTnBoCy554x18yJHI6I+G5Eru4LHmPJZEQsrvPUbMiA8G/WgMK7w7I+ez7++o2ANfbrjvaOl1tFMs+htG3IrZH9/hDX1Pr8Tc0UvH8tcX29KzAgIGcEkINyW5BF9x891hw6VYqgJHEk0huccS7vh3C6gTiODL+26huuBtbct8eZnqLML8PkxGYpuPZBqtqwkSjgc4mB5gbgig5i+y0UDK35LMxXisn9xQtK+nd26gTIHsHe/oblK/b29fUmN/8Y+9jAQrnBp56m1LcDlDp9irKTExSKduXJVWSqdBMA08pEJnEIOB3FPPMybu/oeV8zFeYN3xx576Q6RH+VmplE4ncQV5v+5rzSoyOU7PuEAg8g803PwBJ0CExno/jcMbN8tONYeOmHiuUNryvm3fRUy4tMPVLdAGkUhNWuggGrJcXPv+ouCjz0MKUHz1J2/E8IC9nqTabcxgaBYM0hPhD5Y65FsbxRQKxCQrDjDctW7PUM3HuZunFyifSAqEfuzCp48Il24luWUWZoyJCaPR82jE0+kFA643wRFVni4RYSq3ohJO2pZ7B5dO4xkDWbEpossJPLSrPjYID8rS2UHTlvyNxqIGsg674XJJ7vnh5L7PNwC4hh2sjCI96mzszOTpxLF0T7l88Yz7lAuK6OnL8gXLOnTvpzSb22YG8W7us3jSebFHeeqnXRG1vt+MoUM84LQIBmMsCTAcOauTh0T0l0neQK7m2bLMt2mGxU3HYssS0J2cdv5wljlPsrIuZLAG/2DOZIXgCYT8uMGZN+e2kSirfxZOPCsC0f24nTZzspnVn9VePS1Z5vubmAGGXG8ZFno9Hel0yfA5ZPhF7Dh972BQJ2qCpgH67lmWtBYbvk6sz02wjky2vXyz0XErP/kFB619js1BtwfOV4OPRqOQBjy3Qbk18vigUPPSD5ceHnwck7W9bhAqZdd7SuG7w4/P2F/GaJh8c7e9qgow+Q7cGBo+98WsLkuktFqiZabtXuQTu/Y5ETbR0v7tNSFnvrmu6pjdoan2KjMu8q/Hmj1EfCO2ZGfEIbIXKUlw8qaX9/b2oeSJmFksSeT/Fn0V3nSypChh4Gjh74ybO9aeZ/AN2dwciu2/MhAAAAAElFTkSuQmCC">
+          vue源码解析笔记（runtime+compile 版本）
+        </h1> <div class="theme-vdoing-content content__default"><h2 id="一、数据驱动"><a href="#一、数据驱动" class="header-anchor">#</a> 一、数据驱动</h2> <h3 id="new-vue时进行的操作"><a href="#new-vue时进行的操作" class="header-anchor">#</a> new Vue时进行的操作:</h3> <p>Vue是一个class
+vue调用实例上的**_init**方法进行初始化，该方法在<code>src/core/instance/init.js</code>中定义</p> <p>vue初始化主要做了以下的操作：</p> <ol><li>合并配置（传入的配置与默认配置）</li> <li>初始化生命周期</li> <li>初始化事件中心</li> <li>初始化渲染</li> <li>初始化<strong>data、props、computed、watch</strong>等</li></ol> <h3 id="vue实例的挂载实现"><a href="#vue实例的挂载实现" class="header-anchor">#</a> vue实例的挂载实现</h3> <p>vue中通过$mount实例方法去挂载<strong>vm</strong>，不同的平台和模式执行的逻辑不通</p> <ol><li><strong>runtime + compiler版本</strong>： <code>src/platform/web/entry-runtime-with-compiler.js</code></li> <li><strong>runtimeOnly版本</strong>：<code>src/platform/web/runtime/index.js</code></li> <li><strong>平台版本</strong>： <code>src/platform/weex/runtime/index.js</code></li></ol> <div class="language- line-numbers-mode"><pre class="language-text"><code>const mount = Vue.prototype.$mount
+Vue.prototype.$mount = function (
+  el?: string | Element,
+  hydrating?: boolean
+): Component {
+  el = el &amp;&amp; query(el)
+
+  /* istanbul ignore if */
+  if (el === document.body || el === document.documentElement) {
+    process.env.NODE_ENV !== 'production' &amp;&amp; warn(
+      `Do not mount Vue to &lt;html&gt; or &lt;body&gt; - mount to normal elements instead.`
+    )
+    return this
+  }
+
+  const options = this.$options
+  // resolve template/el and convert to render function
+  if (!options.render) {
+    let template = options.template
+    if (template) {
+      if (typeof template === 'string') {
+        if (template.charAt(0) === '#') {
+          template = idToTemplate(template)
+          /* istanbul ignore if */
+          if (process.env.NODE_ENV !== 'production' &amp;&amp; !template) {
+            warn(
+              `Template element not found or is empty: ${options.template}`,
+              this
+            )
+          }
+        }
+      } else if (template.nodeType) {
+        template = template.innerHTML
+      } else {
+        if (process.env.NODE_ENV !== 'production') {
+          warn('invalid template option:' + template, this)
+        }
+        return this
+      }
+    } else if (el) {
+      template = getOuterHTML(el)
+    }
+    if (template) {
+      /* istanbul ignore if */
+      if (process.env.NODE_ENV !== 'production' &amp;&amp; config.performance &amp;&amp; mark) {
+        mark('compile')
+      }
+
+      const { render, staticRenderFns } = compileToFunctions(template, {
+        shouldDecodeNewlines,
+        shouldDecodeNewlinesForHref,
+        delimiters: options.delimiters,
+        comments: options.comments
+      }, this)
+      options.render = render
+      options.staticRenderFns = staticRenderFns
+
+      /* istanbul ignore if */
+      if (process.env.NODE_ENV !== 'production' &amp;&amp; config.performance &amp;&amp; mark) {
+        mark('compile end')
+        measure(`vue ${this._name} compile`, 'compile', 'compile end')
+      }
+    }
+  }
+  return mount.call(this, el, hydrating)
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br></div></div><p>在执行<code>$mount</code>方法中，首先对el做了限制不能将<code>Vue</code>挂载在html或者body这样的根节点上。
+验证是否定义<code>render</code>方法：</p> <ol><li>未定义：将el或者template字符串转换为<code>render</code>方法</li> <li>已定义：直接进行挂载操作</li></ol> <p><em>注意： 在vue2.x版本中，所有的组件最终渲染都需要render方法，那么这个过程是 Vue 的一个“在线编译”的过程，它是调用 compileToFunction。最后，调用原先原型上的 $mount 方法挂载。</em></p> <p>原先原型上的 $mount 方法在 <code>src/platform/web/runtime/index.js</code> 中定义，之所以这么设计完全是为了复用，因为它是可以被 <code>runtime only</code> 版本的 <code>Vue</code> 直接使用的。</p> <p>$mount方法可传入两个参数，第一个是el,表示挂载的元素，也可以是字符串，也可以是DOM对象，如果是字符串就会在浏览器环境下调用query方法转换成DOM对象。第二个参数是和服务端渲染有关的。</p> <p>$mount 方法实际上会去调用 <code>mountComponent</code> 方法，这个方法定义在 <code>src/core/instance/lifecycle.js</code> 文件中：</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>export function mountComponent (
+  vm: Component,
+  el: ?Element,
+  hydrating?: boolean
+): Component {
+  vm.$el = el
+  if (!vm.$options.render) {
+    vm.$options.render = createEmptyVNode
+    if (process.env.NODE_ENV !== 'production') {
+      /* istanbul ignore if */
+      if ((vm.$options.template &amp;&amp; vm.$options.template.charAt(0) !== '#') ||
+        vm.$options.el || el) {
+        warn(
+          'You are using the runtime-only build of Vue where the template ' +
+          'compiler is not available. Either pre-compile the templates into ' +
+          'render functions, or use the compiler-included build.',
+          vm
+        )
+      } else {
+        warn(
+          'Failed to mount component: template or render function not defined.',
+          vm
+        )
+      }
+    }
+  }
+  callHook(vm, 'beforeMount')
+
+  let updateComponent
+  /* istanbul ignore if */
+  if (process.env.NODE_ENV !== 'production' &amp;&amp; config.performance &amp;&amp; mark) {
+    updateComponent = () =&gt; {
+      const name = vm._name
+      const id = vm._uid
+      const startTag = `vue-perf-start:${id}`
+      const endTag = `vue-perf-end:${id}`
+
+      mark(startTag)
+      const vnode = vm._render()
+      mark(endTag)
+      measure(`vue ${name} render`, startTag, endTag)
+
+      mark(startTag)
+      vm._update(vnode, hydrating)
+      mark(endTag)
+      measure(`vue ${name} patch`, startTag, endTag)
+    }
+  } else {
+    updateComponent = () =&gt; {
+      vm._update(vm._render(), hydrating)
+    }
+  }
+
+  // we set this to vm._watcher inside the watcher's constructor
+  // since the watcher's initial patch may call $forceUpdate (e.g. inside child
+  // component's mounted hook), which relies on vm._watcher being already defined
+  new Watcher(vm, updateComponent, noop, {
+    before () {
+      if (vm._isMounted) {
+        callHook(vm, 'beforeUpdate')
+      }
+    }
+  }, true /* isRenderWatcher */)
+  hydrating = false
+
+  // manually mounted instance, call mounted on self
+  // mounted is called for render-created child components in its inserted hook
+  if (vm.$vnode == null) {
+    vm._isMounted = true
+    callHook(vm, 'mounted')
+  }
+  return vm
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br></div></div><p><code>mountComponent</code>方法的核心是先实例化一个渲染<code>Watcher</code>，在它的回调函数中会调用<code>updateComponent</code>方法，然后在此方法中调用<code>vm.render</code>方法生成虚拟dom，最终调用<code>vm._update</code> 更新 DOM（也就是映射为真实dom）</p> <h3 id="render方法："><a href="#render方法：" class="header-anchor">#</a> render方法：</h3> <p>Vue 的 <code>_render</code> 方法是实例的一个私有方法，它用来把实例渲染成一个虚拟 Node。它的定义在 <code>src/core/instance/render.js</code> 文件中:</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>Vue.prototype._render = function (): VNode {
+  const vm: Component = this
+  const { render, _parentVnode } = vm.$options
+
+  // reset _rendered flag on slots for duplicate slot check
+  if (process.env.NODE_ENV !== 'production') {
+    for (const key in vm.$slots) {
+      // $flow-disable-line
+      vm.$slots[key]._rendered = false
+    }
+  }
+
+  if (_parentVnode) {
+    vm.$scopedSlots = _parentVnode.data.scopedSlots || emptyObject
+  }
+
+  // set parent vnode. this allows render functions to have access
+  // to the data on the placeholder node.
+  vm.$vnode = _parentVnode
+  // render self
+  let vnode
+  try {
+    vnode = render.call(vm._renderProxy, vm.$createElement)
+  } catch (e) {
+    handleError(e, vm, `render`)
+    // return error render result,
+    // or previous vnode to prevent render error causing blank component
+    /* istanbul ignore else */
+    if (process.env.NODE_ENV !== 'production') {
+      if (vm.$options.renderError) {
+        try {
+          vnode = vm.$options.renderError.call(vm._renderProxy, vm.$createElement, e)
+        } catch (e) {
+          handleError(e, vm, `renderError`)
+          vnode = vm._vnode
+        }
+      } else {
+        vnode = vm._vnode
+      }
+    } else {
+      vnode = vm._vnode
+    }
+  }
+  // return empty vnode in case the render function errored out
+  if (!(vnode instanceof VNode)) {
+    if (process.env.NODE_ENV !== 'production' &amp;&amp; Array.isArray(vnode)) {
+      warn(
+        'Multiple root nodes returned from render function. Render function ' +
+        'should return a single root node.',
+        vm
+      )
+    }
+    vnode = createEmptyVNode()
+  }
+  // set parent
+  vnode.parent = _parentVnode
+  return vnode
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br></div></div><p>render方法 最终是通过执行<code>createElement</code> 方法并返回的是 vnode，它是一个虚拟 Node。Vue 2.0 相比 Vue 1.0 最大的升级就是利用了 Virtual DOM。</p> <h3 id="virtual-dom："><a href="#virtual-dom：" class="header-anchor">#</a> Virtual DOM：</h3> <p>直接在浏览器中生产dom是非常昂贵的，因为浏览器的标准就把 DOM 设计的非常复杂。频繁去更新dom就会产生很多性能问题。
+而 Virtual DOM就是用一个原生的js对象去描述一个dom节点，所以它比去创建一个dom的代价要小很多。它是定义在<code>src/core/vdom/vnode.js</code></p> <div class="language- line-numbers-mode"><pre class="language-text"><code>export default class VNode {
+  tag: string | void;
+  data: VNodeData | void;
+  children: ?Array&lt;VNode&gt;;
+  text: string | void;
+  elm: Node | void;
+  ns: string | void;
+  context: Component | void; // rendered in this component's scope
+  key: string | number | void;
+  componentOptions: VNodeComponentOptions | void;
+  componentInstance: Component | void; // component instance
+  parent: VNode | void; // component placeholder node
+
+  // strictly internal
+  raw: boolean; // contains raw HTML? (server only)
+  isStatic: boolean; // hoisted static node
+  isRootInsert: boolean; // necessary for enter transition check
+  isComment: boolean; // empty comment placeholder?
+  isCloned: boolean; // is a cloned node?
+  isOnce: boolean; // is a v-once node?
+  asyncFactory: Function | void; // async component factory function
+  asyncMeta: Object | void;
+  isAsyncPlaceholder: boolean;
+  ssrContext: Object | void;
+  fnContext: Component | void; // real context vm for functional nodes
+  fnOptions: ?ComponentOptions; // for SSR caching
+  fnScopeId: ?string; // functional scope id support
+
+  constructor (
+    tag?: string,
+    data?: VNodeData,
+    children?: ?Array&lt;VNode&gt;,
+    text?: string,
+    elm?: Node,
+    context?: Component,
+    componentOptions?: VNodeComponentOptions,
+    asyncFactory?: Function
+  ) {
+    this.tag = tag
+    this.data = data
+    this.children = children
+    this.text = text
+    this.elm = elm
+    this.ns = undefined
+    this.context = context
+    this.fnContext = undefined
+    this.fnOptions = undefined
+    this.fnScopeId = undefined
+    this.key = data &amp;&amp; data.key
+    this.componentOptions = componentOptions
+    this.componentInstance = undefined
+    this.parent = undefined
+    this.raw = false
+    this.isStatic = false
+    this.isRootInsert = true
+    this.isComment = false
+    this.isCloned = false
+    this.isOnce = false
+    this.asyncFactory = asyncFactory
+    this.asyncMeta = undefined
+    this.isAsyncPlaceholder = false
+  }
+
+  // DEPRECATED: alias for componentInstance for backwards compat.
+  /* istanbul ignore next */
+  get child (): Component | void {
+    return this.componentInstance
+  }
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br></div></div><p>Vue.js 中 Virtual DOM 是借鉴了一个开源库 <em>snabbdom</em> 的实现
+其实 VNode 是对真实 DOM 的一种抽象描述，它的核心定义无非就几个关键属性，标签名、数据、子节点、键值等，其它属性都是用来扩展 VNode 的灵活性以及实现一些特殊 feature 的。由于 VNode 只是用来映射到真实 DOM 的渲染，不需要包含操作 DOM 的方法，因此它是非常轻量和简单的。</p> <p>Virtual DOM 除了它的数据结构的定义，映射到真实的 DOM 实际上要经历 VNode 的 create、diff、patch 等过程。那么在 Vue.js 中，VNode 的 create 是通过之前提到的 createElement 方法创建的.</p> <h3 id="createelement方法："><a href="#createelement方法：" class="header-anchor">#</a> createElement方法：</h3> <p>Vue.js就是利用此方法去生成vNode的，它的定义是在 <code>src/core/vdom/create-elemenet.js</code></p> <div class="language- line-numbers-mode"><pre class="language-text"><code>// wrapper function for providing a more flexible interface
+// without getting yelled at by flow
+export function createElement (
+  context: Component,
+  tag: any,
+  data: any,
+  children: any,
+  normalizationType: any,
+  alwaysNormalize: boolean
+): VNode | Array&lt;VNode&gt; {
+  if (Array.isArray(data) || isPrimitive(data)) {
+    normalizationType = children
+    children = data
+    data = undefined
+  }
+  if (isTrue(alwaysNormalize)) {
+    normalizationType = ALWAYS_NORMALIZE
+  }
+  return _createElement(context, tag, data, children, normalizationType)
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br></div></div><p><code>createElement</code> 方法其实是对<code>_createElement</code>方法的封装，它允许传入更灵活的参数，在处理这些参数后，调用真正创建VNode的函数<code>_createElement</code></p> <div class="language-export function _createElement ( line-numbers-mode"><pre class="language-text"><code>  context: Component,
+  tag?: string | Class&lt;Component&gt; | Function | Object,
+  data?: VNodeData,
+  children?: any,
+  normalizationType?: number
+): VNode | Array&lt;VNode&gt; {
+  if (isDef(data) &amp;&amp; isDef((data: any).__ob__)) {
+    process.env.NODE_ENV !== 'production' &amp;&amp; warn(
+      `Avoid using observed data object as vnode data: ${JSON.stringify(data)}\n` +
+      'Always create fresh vnode data objects in each render!',
+      context
+    )
+    return createEmptyVNode()
+  }
+  // object syntax in v-bind
+  if (isDef(data) &amp;&amp; isDef(data.is)) {
+    tag = data.is
+  }
+  if (!tag) {
+    // in case of component :is set to falsy value
+    return createEmptyVNode()
+  }
+  // warn against non-primitive key
+  if (process.env.NODE_ENV !== 'production' &amp;&amp;
+    isDef(data) &amp;&amp; isDef(data.key) &amp;&amp; !isPrimitive(data.key)
+  ) {
+    if (!__WEEX__ || !('@binding' in data.key)) {
+      warn(
+        'Avoid using non-primitive value as key, ' +
+        'use string/number value instead.',
+        context
+      )
+    }
+  }
+  // support single function children as default scoped slot
+  if (Array.isArray(children) &amp;&amp;
+    typeof children[0] === 'function'
+  ) {
+    data = data || {}
+    data.scopedSlots = { default: children[0] }
+    children.length = 0
+  }
+  if (normalizationType === ALWAYS_NORMALIZE) {
+    children = normalizeChildren(children)
+  } else if (normalizationType === SIMPLE_NORMALIZE) {
+    children = simpleNormalizeChildren(children)
+  }
+  let vnode, ns
+  if (typeof tag === 'string') {
+    let Ctor
+    ns = (context.$vnode &amp;&amp; context.$vnode.ns) || config.getTagNamespace(tag)
+    if (config.isReservedTag(tag)) {
+      // platform built-in elements
+      vnode = new VNode(
+        config.parsePlatformTagName(tag), data, children,
+        undefined, undefined, context
+      )
+    } else if (isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
+      // component
+      vnode = createComponent(Ctor, data, context, children, tag)
+    } else {
+      // unknown or unlisted namespaced elements
+      // check at runtime because it may get assigned a namespace when its
+      // parent normalizes children
+      vnode = new VNode(
+        tag, data, children,
+        undefined, undefined, context
+      )
+    }
+  } else {
+    // direct component options / constructor
+    vnode = createComponent(tag, data, context, children)
+  }
+  if (Array.isArray(vnode)) {
+    return vnode
+  } else if (isDef(vnode)) {
+    if (isDef(ns)) applyNS(vnode, ns)
+    if (isDef(data)) registerDeepBindings(data)
+    return vnode
+  } else {
+    return createEmptyVNode()
+  }
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br></div></div><p><code>_createElement</code>方法有五个参数，context 表示 VNode 的上下文环境，它是<code>Component</code> 类型；tag 表示标签，它可以是一个字符串，也可以是一个<code>Component</code>；data 表示 VNode 的数据，它是一个<code>VNodeData</code> 类型，可以在 <code>flow/vnode.js</code> 中找到它的定义，这里先不展开说；<code>children</code>表示当前 VNode 的子节点，它是任意类型的，它接下来需要被规范为标准的 VNode 数组； <code>normalizationType</code>表示子节点规范的类型，类型不同规范的方法也就不一样，它主要是参考	<code>render</code> 函数是编译生成的还是用户手写的</p> <h5 id="children-的规范化"><a href="#children-的规范化" class="header-anchor">#</a> children 的规范化:</h5> <p>由于 Virtual DOM 实际上是一个树状结构，每一个 VNode 可能会有若干个子节点，这些子节点应该也是 VNode 的类型
+<code>_createElement</code>接收的第 4 个参数 children 是任意类型的，因此我们需要把它们规范成 VNode 类型</p> <p>这里根据 <code>normalizationType</code> 的不同，调用了 <code>normalizeChildren(children)</code> 和 <code>simpleNormalizeChildren(children)</code> 方法，它们的定义都在 <code>src/core/vdom/helpers/normalzie-children.js</code> 中：</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>// The template compiler attempts to minimize the need for normalization by
+// statically analyzing the template at compile time.
+//
+// For plain HTML markup, normalization can be completely skipped because the
+// generated render function is guaranteed to return Array&lt;VNode&gt;. There are
+// two cases where extra normalization is needed:
+
+// 1. When the children contains components - because a functional component
+// may return an Array instead of a single root. In this case, just a simple
+// normalization is needed - if any child is an Array, we flatten the whole
+// thing with Array.prototype.concat. It is guaranteed to be only 1-level deep
+// because functional components already normalize their own children.
+export function simpleNormalizeChildren (children: any) {
+  for (let i = 0; i &lt; children.length; i++) {
+    if (Array.isArray(children[i])) {
+      return Array.prototype.concat.apply([], children)
+    }
+  }
+  return children
+}
+
+// 2. When the children contains constructs that always generated nested Arrays,
+// e.g. &lt;template&gt;, &lt;slot&gt;, v-for, or when the children is provided by user
+// with hand-written render functions / JSX. In such cases a full normalization
+// is needed to cater to all possible types of children values.
+export function normalizeChildren (children: any): ?Array&lt;VNode&gt; {
+  return isPrimitive(children)
+    ? [createTextVNode(children)]
+    : Array.isArray(children)
+      ? normalizeArrayChildren(children)
+      : undefined
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br></div></div><p><code>simpleNormalizeChildren</code>方法调用场景是<code>render</code> 函数是编译生成的。理论上编译生成的<code>children</code> 都已经是 VNode 类型的，但这里有一个例外，就是 <code>functional component</code> 函数式组件返回的是一个数组而不是一个根节点，所以会通过 <code>Array.prototype.concat</code> 方法把整个<code>children</code> 数组打平，让它的深度只有一层。</p> <p><code>normalizeChildren</code>方法的调用场景有 2 种，一个场景是<code>render</code> 函数是用户手写的，当 <code>children</code> 只有一个节点的时候，Vue.js 从接口层面允许用户把<code>children</code> 写成基础类型用来创建单个简单的文本节点，这种情况会调用<code>createTextVNode</code> 创建一个文本节点的 VNode；另一个场景是当编译 <code>slot、v-for</code> 的时候会产生嵌套数组的情况，会调用<code>normalizeArrayChildren</code> 方法，接下来看一下它的实现：</p> <h3 id="数据驱动小结："><a href="#数据驱动小结：" class="header-anchor">#</a> 数据驱动小结：</h3> <p>1.初始化一个 vue 实例的一系列相关环境（<code>watcher，lifecycle, methods等等</code>）</p> <p>2.<code>compile</code>：将 <code>template</code> （若有）转化成<code>render</code></p> <ol start="3"><li><p>给实例注册一个渲染 <code>Watcher</code>，渲染 <code>watcher</code> 拥有一个回调，该回调函数会在初始化和每次 <code>vm</code>实例更新时触发，其中初始化的时候包含下面两步骤：</p></li> <li><p>用 render 函数生成 <code>vnode</code>。 从根<code>vnode</code>开始创建（处理边界条件包括 <code>textVnode，emptyVnode</code> 等等），摊平所有 <code>children vnode</code> 成一维，最终创建成一个 <code>vnode tree</code></p></li> <li><p>开始执行 <code>patch</code> 过程，从根 vnode 起开始创建真实 DOM，递归一整个 vnode tree，递归到最底层的时候开始将 <code>vnode-&gt;el</code> 插入到 <code>parent vnode-&gt;el</code>。 也就是当每一个真实 DOM 插入到父亲 DOM 节点的时候，当前这个 DOM 节点会是一个构建好的 DOM tree</p></li></ol> <div class="language- line-numbers-mode"><pre class="language-text"><code>function normalizeArrayChildren (children: any, nestedIndex?: string): Array&lt;VNode&gt; {
+  const res = []
+  let i, c, lastIndex, last
+  for (i = 0; i &lt; children.length; i++) {
+    c = children[i]
+    if (isUndef(c) || typeof c === 'boolean') continue
+    lastIndex = res.length - 1
+    last = res[lastIndex]
+    //  nested
+    if (Array.isArray(c)) {
+      if (c.length &gt; 0) {
+        c = normalizeArrayChildren(c, `${nestedIndex || ''}_${i}`)
+        // merge adjacent text nodes
+        if (isTextNode(c[0]) &amp;&amp; isTextNode(last)) {
+          res[lastIndex] = createTextVNode(last.text + (c[0]: any).text)
+          c.shift()
+        }
+        res.push.apply(res, c)
+      }
+    } else if (isPrimitive(c)) {
+      if (isTextNode(last)) {
+        // merge adjacent text nodes
+        // this is necessary for SSR hydration because text nodes are
+        // essentially merged when rendered to HTML strings
+        res[lastIndex] = createTextVNode(last.text + c)
+      } else if (c !== '') {
+        // convert primitive to vnode
+        res.push(createTextVNode(c))
+      }
+    } else {
+      if (isTextNode(c) &amp;&amp; isTextNode(last)) {
+        // merge adjacent text nodes
+        res[lastIndex] = createTextVNode(last.text + c.text)
+      } else {
+        // default key for nested array children (likely generated by v-for)
+        if (isTrue(children._isVList) &amp;&amp;
+          isDef(c.tag) &amp;&amp;
+          isUndef(c.key) &amp;&amp;
+          isDef(nestedIndex)) {
+          c.key = `__vlist${nestedIndex}_${i}__`
+        }
+        res.push(c)
+      }
+    }
+  }
+  return res
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br></div></div><p><code>normalizeArrayChildren</code>接收 2 个参数，<code>children</code>表示要规范的子节点，<code>nestedIndex</code>表示嵌套的索引，因为单个<code>child</code> 可能是一个数组类型。<code>normalizeArrayChildren</code> 主要的逻辑就是遍历<code>children</code>，获得单个节点 c，然后对 c 的类型判断，如果是一个数组类型，则递归调用<code>normalizeArrayChildren</code>; 如果是基础类型，则通过<code>createTextVNode</code> 方法转换成<code>VNode</code> 类型；否则就已经是<code>VNode</code> 类型了，如果<code>children</code> 是一个列表并且列表还存在嵌套的情况，则根据<code>nestedIndex</code> 去更新它的 key。这里需要注意一点，在遍历的过程中，对这 3 种情况都做了如下处理：如果存在两个连续的 text 节点，会把它们合并成一个 text 节点。</p> <p>经过对<code>children</code> 的规范化，<code>children</code>变成了一个类型为<code>VNode</code> 的 Array。</p> <h5 id="vnode-的创建"><a href="#vnode-的创建" class="header-anchor">#</a> VNode 的创建:</h5> <p>回到<code>createElement</code> 函数，规范化<code>children</code> 后，接下来会去创建一个<code>VNode</code> 的实例</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>let vnode, ns
+if (typeof tag === 'string') {
+  let Ctor
+  ns = (context.$vnode &amp;&amp; context.$vnode.ns) || config.getTagNamespace(tag)
+  if (config.isReservedTag(tag)) {
+    // platform built-in elements
+    vnode = new VNode(
+      config.parsePlatformTagName(tag), data, children,
+      undefined, undefined, context
+    )
+  } else if (isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
+    // component
+    vnode = createComponent(Ctor, data, context, children, tag)
+  } else {
+    // unknown or unlisted namespaced elements
+    // check at runtime because it may get assigned a namespace when its
+    // parent normalizes children
+    vnode = new VNode(
+      tag, data, children,
+      undefined, undefined, context
+    )
+  }
+} else {
+  // direct component options / constructor
+  vnode = createComponent(tag, data, context, children)
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br></div></div><p>这里先对<code>tag</code> 做判断，如果是<code>string</code> 类型，则接着判断如果是内置的一些节点，则直接创建一个普通<code>VNode</code>，如果是为已注册的组件名，则通过<code>createComponent</code> 创建一个组件类型的<code>VNode</code>，否则创建一个未知的标签的<code>VNode</code>。 如果是<code>tag</code> 一个<code>Component</code> 类型，则直接调用<code>createComponent</code> 创建一个组件类型的<code>VNode</code> 节点。对于<code>createComponent</code> 创建组件类型的<code>VNode</code> 的过程，我们之后会去介绍，本质上它还是返回了一个<code>VNode</code>。</p> <p>那么至此，我们大致了解了<code>createElement</code> 创建<code>VNode</code> 的过程，每个<code>VNode</code> 有<code>children</code>，<code>children</code>每个元素也是一个<code>VNode</code>，这样就形成了一个 <code>VNode Tree</code>，它很好的描述了我们的<code>DOM Tree</code>。</p> <h5 id="update"><a href="#update" class="header-anchor">#</a> update</h5> <p>Vue 的 _update 是实例的一个私有方法，它被调用的时机有 2 个，一个是首次渲染，一个是数据更新的时</p> <p><strong>注意细节：
+在 render 过程中每一个模板节点都会生成对应的 _c，也就是执行 createElement 函数，children 拍平成一维数组就是为了建立好 tree 的数据结构，因为对于 tree 来说，每个节点的 children 就是一维数组。另外 patch 的递归过程是一个自上而下的过程，但是插入到 DOM 节点的顺序是自下而上，也就是子节点先插入，父节点后插入</strong></p></div></div> <div class="page-edit"><div class="edit-link"><a href="https://github.com/Gyang18/yangBlog/edit/master/docs/01.前端/01.Vue/01.Vue源码解析笔记.md" target="_blank" rel="noopener noreferrer">编辑</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div> <!----> <div class="last-updated"><span class="prefix">上次更新:</span> <span class="time">2020/06/16, 9:06:00</span></div></div> <div class="page-nav-wapper"><div class="page-nav-centre-wrap"><!----> <a href="/yangBlog/pages/fdd547/" class="page-nav-centre page-nav-centre-next"><div class="tooltip">
+        React开发基础环境搭建
+      </div></a></div> <div class="page-nav"><p class="inner"><!----> <span class="next"><a href="/yangBlog/pages/fdd547/">React开发基础环境搭建</a>
+        →
+      </span></p></div></div></div> <div class="article-list"><div class="article-title"><a href="/yangBlog/archives/" class="iconfont icon-shizhong">最近更新</a></div> <div class="article-wrapper"><dl><dd>01</dd> <dt><a href="/yangBlog/pages/05d7b8/"><div>css资源收藏</div></a> <span>06-14</span></dt></dl><dl><dd>02</dd> <dt><a href="/yangBlog/pages/345202/"><div>工具库资源</div></a> <span>06-14</span></dt></dl><dl><dd>03</dd> <dt><a href="/yangBlog/pages/8c38fb/"><div>uni-app资源</div></a> <span>06-14</span></dt></dl> <dl><dd></dd> <dt><a href="/yangBlog/archives/" class="more">更多文章&gt;</a></dt></dl></div></div> </main></div> <div class="footer"><div class="icons"><a href="mailto:2770723534@qq.com" title="发邮件" target="_blank" class="iconfont icon-youjian"></a><a href="https://github.com/Gyang18" title="GitHub" target="_blank" class="iconfont icon-github"></a></div> 
+  Theme by <a href="https://github.com/xugaoyi/vuepress-theme-vdoing" target="_blank" title="本站主题">Vdoing</a> 
+     | Copyright © 2019-2020
+    <span>Evan Xu | <a href="https://github.com/xugaoyi/vuepress-theme-vdoing/blob/master/LICENSE" target="_blank">MIT License</a></span></div> <div class="buttons"><div title="返回顶部" class="button blur go-to-top iconfont icon-fanhuidingbu" style="display:none;"></div> <div title="去评论" class="button blur go-to-comment iconfont icon-pinglun" style="display:none;"></div> <div title="主题模式" class="button blur theme-mode-but iconfont icon-zhuti"><ul class="select-box" style="display:none;"><li class="iconfont icon-zidong">
+          跟随系统
+        </li><li class="iconfont icon-rijianmoshi">
+          浅色模式
+        </li><li class="iconfont icon-yejianmoshi">
+          深色模式
+        </li><li class="iconfont icon-yuedu">
+          阅读模式
+        </li></ul></div></div> <!----></div><div class="global-ui"><div></div></div></div>
+    <script src="/yangBlog/assets/js/app.bf5a58a0.js" defer></script><script src="/yangBlog/assets/js/2.c95f3dc1.js" defer></script><script src="/yangBlog/assets/js/6.801b23e0.js" defer></script>
+  </body>
+</html>
