@@ -13,12 +13,12 @@ cd docs/.vuepress/dist
 echo 'blog.gyang.live' > CNAME
 if [ -z "$GITHUB_TOKEN" ]; then
   msg='deploy'
-  githubUrl=git@github.com:xugaoyi/vuepress-theme-vdoing.git
+  githubUrl=git@github.com:Gyang18/yangBlog.git
 else
   msg='来自github actions的自动部署'
-  githubUrl=https://xugaoyi:${GITHUB_TOKEN}@github.com/xugaoyi/vuepress-theme-vdoing.git
-  git config --global user.name "xugaoyi"
-  git config --global user.email "894072666@qq.com"
+  githubUrl=https://Gyang18:${GITHUB_TOKEN}@github.com/Gyang18/yangBlog.git
+  git config --global user.name "Gyang18"
+  git config --global user.email "1763645020@qq.com"
 fi
 git init
 git add -A
