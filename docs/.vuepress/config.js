@@ -15,6 +15,7 @@ module.exports = {
 
   ],
   host: 'localhost',
+  base: '/yangBlog/',
   markdown: {
     lineNumbers: true // 代码行号
   },
