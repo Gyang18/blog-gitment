@@ -19,7 +19,6 @@ module.exports = {
   markdown: {
     lineNumbers: true // 代码行号
   },
-
   theme: 'vdoing', // 使用依赖包主题
   // theme: require.resolve('../../theme-vdoing'), // 使用本地主题
 
